@@ -1,0 +1,1 @@
+/Applications/Postgres.app/Contents/Versions/16/bin/postgres "-D" "/Users/aaronmclean/Documents/appServer/sql" "-p" "1206"

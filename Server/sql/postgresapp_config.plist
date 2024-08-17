@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>initdb_locale_provider</key>
+	<string>icu</string>
+	<key>initdb_macos_version</key>
+	<string>14.0.0</string>
+	<key>initdb_postgresql_version</key>
+	<string>16.0</string>
+	<key>recently_started_collation_hash</key>
+	<array>
+		<data>
+		XbFF3NaKaGN1IBNAsNv+UZqTVpU8+/A9B3YLkAF1bMs=
+		</data>
+	</array>
+	<key>recently_started_on_macos_versions</key>
+	<array>
+		<string>14.0.0</string>
+	</array>
+	<key>recently_started_postgresql_versions</key>
+	<array>
+		<string>16.0</string>
+	</array>
+</dict>
+</plist>
