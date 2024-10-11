@@ -110,9 +110,6 @@ struct MakeAccountView: View {
        @State private var username: String = ""
        @State private var isUsernameAvailable: Bool? = nil
        @State private var debounceTimer: Timer?
-       
-       
-       // Account Info
        @State private var firstName: String = ""
        @State private var lastName: String = ""
        @State private var dateOfBirth = Date()

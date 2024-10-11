@@ -151,19 +151,15 @@ struct WorkoutPreviewCardView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                // Workout Name Field
                 TextField("Workout Name", text: $workoutName)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
-
-                // Exercise Counter
                 Text("\(selectedExercises.count) Exercises")
                     .foregroundColor(.gray)
                     .padding(.trailing)
             }
             .padding(5)
-            // Exercises Preview
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 15) {
                     ForEach(selectedExercises) { exercise in

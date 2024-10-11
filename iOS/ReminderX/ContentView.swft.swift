@@ -15,8 +15,6 @@ struct ContentView: View {
 
                 Toggle("Setting 2", isOn: .constant(false))
                     .toggleStyle(SwitchToggleStyle(tint: .black))
-
-                // Add more settings here
             }
             .padding()
             .background(Color.white)

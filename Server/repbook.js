@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const app = express();
 const port = 3000;
-require('dotenv').config({ path: './.gitignore' }); // Use the correct relative path
+require('dotenv').config({ path: './.gitignore' });
 
 app.use(bodyParser.json());
 
