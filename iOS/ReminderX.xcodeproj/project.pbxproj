@@ -53,33 +53,34 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		630BD1AC2B0F6DFB0027830C /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
-		630BD1AE2B100F040027830C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		630BD1AC2B0F6DFB0027830C /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities/Graph.swift; sourceTree = "<group>"; };
+		630BD1AE2B100F040027830C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
 		632080B729D548E8000CD799 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		6331DD5D2B0F1E320076C579 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		6331DD5F2B0F1E8A0076C579 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
-		6331DD612B0F1F190076C579 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		6331DD632B0F1F5A0076C579 /* MakeAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAccountView.swift; sourceTree = "<group>"; };
-		6331DD652B0F1FC40076C579 /* LoginAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAccountView.swift; sourceTree = "<group>"; };
-		6331DD672B0F20640076C579 /* VisualComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualComponents.swift; sourceTree = "<group>"; };
-		6331DD692B0F20D90076C579 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		63461BFE2B0DE7E90077299E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		6331DD5D2B0F1E320076C579 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities/Models.swift; sourceTree = "<group>"; };
+		6331DD5F2B0F1E8A0076C579 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/KeychainManager.swift; sourceTree = "<group>"; };
+		6331DD612B0F1F190076C579 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
+		6331DD632B0F1F5A0076C579 /* MakeAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/MakeAccountView.swift; sourceTree = "<group>"; };
+		6331DD652B0F1FC40076C579 /* LoginAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LoginAccountView.swift; sourceTree = "<group>"; };
+		6331DD672B0F20640076C579 /* VisualComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities/VisualComponents.swift; sourceTree = "<group>"; };
+		6331DD692B0F20D90076C579 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LoginView.swift; sourceTree = "<group>"; };
+		63461BFE2B0DE7E90077299E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/NetworkManager.swift; sourceTree = "<group>"; };
 		637A811929C2908400B5D1FF /* ReminderX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReminderX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		637A811C29C2908400B5D1FF /* ReminderXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderXApp.swift; sourceTree = "<group>"; };
 		637A811E29C2908400B5D1FF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		637A812029C2908600B5D1FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		637A812329C2908600B5D1FF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		637A812329C2908600B5D1FF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
 		637A812929C2908600B5D1FF /* ReminderXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReminderXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		637A812D29C2908600B5D1FF /* ReminderXTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderXTests.swift; sourceTree = "<group>"; };
 		637A813329C2908600B5D1FF /* ReminderXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReminderXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		637A813729C2908600B5D1FF /* ReminderXUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderXUITests.swift; sourceTree = "<group>"; };
 		637A813929C2908600B5D1FF /* ReminderXUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderXUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		637A814A29C2FA0600B5D1FF /* VideoEditorHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoEditorHomeView.swift; sourceTree = "<group>"; };
-		637A814C29C2FF6800B5D1FF /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		637A815729C4671B00B5D1FF /* AiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AiView.swift; sourceTree = "<group>"; };
-		6385743A29D93DED00312453 /* ColorSchemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSchemeManager.swift; sourceTree = "<group>"; };
-		63AFC0232B1E32E200B73E58 /* WorkoutBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutBuilder.swift; sourceTree = "<group>"; };
+		637A814A29C2FA0600B5D1FF /* VideoEditorHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/VideoEditorHomeView.swift; sourceTree = "<group>"; };
+		637A814C29C2FF6800B5D1FF /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HomeView.swift; sourceTree = "<group>"; };
+		637A815729C4671B00B5D1FF /* AiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AiView.swift; sourceTree = "<group>"; };
+		6385743A29D93DED00312453 /* ColorSchemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/ColorSchemeManager.swift; sourceTree = "<group>"; };
+		63AFC0232B1E32E200B73E58 /* WorkoutBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/WorkoutBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
 
 /* Begin PBXFrameworksBuildPhase section */
 		637A811629C2908400B5D1FF /* Frameworks */ = {
