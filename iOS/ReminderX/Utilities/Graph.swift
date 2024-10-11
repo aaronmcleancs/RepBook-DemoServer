@@ -165,7 +165,6 @@ struct GraphPoints: View {
 
     private func adjustedLabelPosition(index: Int, frame: CGRect, geometry: GeometryProxy) -> CGPoint {
         var position = data.normalizedPoint(index: index, frame: frame)
-        // Adjust label position if it's near the edges
         if position.x < 20 { position.x = 30 }
         if position.x > geometry.size.width - 30 { position.x = geometry.size.width - 30 }
         return position

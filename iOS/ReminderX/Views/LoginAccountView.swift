@@ -117,7 +117,6 @@ struct LoginAccountView: View {
             do {
                 let loginResponse = try JSONDecoder().decode(LoginResponse.self, from: data)
                 
-                // Save to Keychain
                 let userIdStatus = KeychainManager.save("\(loginResponse.memberId)".data(using: .utf8)!,
                                                         service: "YourAppService",
                                                         account: "userId")

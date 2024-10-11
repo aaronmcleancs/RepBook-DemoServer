@@ -76,7 +76,6 @@ struct ColorScheme {
     static let medOrange = Color(red: 0.38, green: 0.80, blue: 0.25) 
     static let lightOrange = Color(red: 0.67, green: 0.95, blue: 0.63)
 
-    
     static let darkRed = Color(red: 0, green: 0.05, blue: 0.65)
     static let medRed = Color(red: 0.45, green: 0.55, blue: 0.97)
     static let lightRed = Color(red: 0.85, green: 0.87, blue: 1.00)
@@ -89,7 +88,6 @@ struct ColorScheme {
     static let medPink = Color(red: 0.99, green: 0.45, blue: 0.65)
     static let lightPink = Color(red: 1.00, green: 0.79, blue: 0.86)
     
-    // Set 1: Ocean Blues
     static let darkMulti1 = Color(red: 0.0, green: 0.2, blue: 0.4)
     static let medMulti1 = Color(red: 0.4, green: 0.7, blue: 0.9)
     static let lightMulti1 = Color(red: 0.8, green: 0.9, blue: 0.98)
