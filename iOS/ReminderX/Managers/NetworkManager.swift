@@ -5,7 +5,7 @@ import Security
 
 class NetworkManager {
       static func createWorkout(memberId: Int, workoutName: String, exerciseIds: [Int], authKey: String, completion: @escaping (Result<Void, Error>) -> Void) {
-          guard let url = URL(string: "http://192.168.0.190:3000/createWorkout/\(memberId)") else {
+          guard let url = URL(string: "http://192.168.0.195:3000/createWorkout/\(memberId)") else {
               print("Invalid URL")
               completion(.failure(NetworkError.invalidURL))
               return
@@ -46,7 +46,7 @@ class NetworkManager {
           }.resume()
       }
     static func fetchDetailedWorkoutData(workoutId: Int, authKey: String, completion: @escaping (Result<DetailedWorkout, Error>) -> Void) {
-           guard let url = URL(string: "http://192.168.0.190:3000/detailedWorkout/\(workoutId)") else {
+           guard let url = URL(string: "http://192.168.0.195:3000/detailedWorkout/\(workoutId)") else {
                print("Invalid URL")
                completion(.failure(NetworkError.invalidURL))
                return
@@ -80,7 +80,7 @@ class NetworkManager {
            }.resume()
        }
     static func fetchWorkoutsForMember(memberId: Int, authKey: String, completion: @escaping (Result<[Workout], Error>) -> Void) {
-            guard let url = URL(string: "http://192.168.0.190:3000/workouts/\(memberId)") else {
+            guard let url = URL(string: "http://192.168.0.195:3000/workouts/\(memberId)") else {
                 print("Invalid URL")
                 completion(.failure(NetworkError.invalidURL))
                 return
@@ -113,7 +113,7 @@ class NetworkManager {
             }.resume()
         }
     static func fetchMemberMetrics(memberId: Int, authKey: String, completion: @escaping (Result<[MemberMetric], Error>) -> Void) {
-          guard let url = URL(string: "http://192.168.0.190:3000/membersMetrics/\(memberId)") else {
+          guard let url = URL(string: "http://192.168.0.195:3000/membersMetrics/\(memberId)") else {
               print("Invalid URL")
               completion(.failure(NetworkError.invalidURL))
               return
@@ -147,7 +147,7 @@ class NetworkManager {
           }.resume()
       }
     static func fetchUserDataAndMetrics(memberId: Int, authKey: String, completion: @escaping (UserInfo?) -> Void) {
-        guard let url = URL(string: "http://192.168.0.190:3000/userDataAndMetrics/\(memberId)") else {
+        guard let url = URL(string: "http://192.168.0.195:3000/userDataAndMetrics/\(memberId)") else {
             print("Invalid URL")
             completion(nil)
             return
@@ -188,7 +188,7 @@ class NetworkManager {
         }.resume()
     }
     static func signUpUser(with data: [String: Any], completion: @escaping (Result<Void, Error>) -> Void) {
-            guard let url = URL(string: "http://192.168.0.190:3000/signup") else {
+            guard let url = URL(string: "http://192.168.0.195:3000/signup") else {
                 print("Invalid URL")
                 completion(.failure(NetworkError.invalidURL))
                 return
@@ -223,7 +223,7 @@ class NetworkManager {
             }.resume()
         }
     static func fetchExercises(page: Int, completion: @escaping ([Exercise]) -> Void) {
-        guard let url = URL(string: "http://192.168.0.190:3000/exercises?page=\(page)") else {
+        guard let url = URL(string: "http://192.168.0.195:3000/exercises?page=\(page)") else {
             print("Invalid URL")
             completion([])
             return

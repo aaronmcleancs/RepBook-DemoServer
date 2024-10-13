@@ -99,99 +99,72 @@ struct AiView: View {
         }
     }
         
-        private func isSendButtonEnabled() -> Bool {
-            let isInputNotEmpty = !userMessage.trimmingCharacters(in: .whitespaces).isEmpty
-            let timeSinceLastMessage = Date().timeIntervalSince(lastSentMessageDate)
-            let minTimeBetweenMessages: TimeInterval = 3
-            return isInputNotEmpty && !isWaitingForResponse && timeSinceLastMessage >= minTimeBetweenMessages
-        }
+    private func isSendButtonEnabled() -> Bool {
+        let isInputNotEmpty = !userMessage.trimmingCharacters(in: .whitespaces).isEmpty
+        let timeSinceLastMessage = Date().timeIntervalSince(lastSentMessageDate)
+        let minTimeBetweenMessages: TimeInterval = 3
+        return isInputNotEmpty && !isWaitingForResponse && timeSinceLastMessage >= minTimeBetweenMessages
+    }
         
+    private func sendMessage() {
+        let message = ChatMessage(text: userMessage, isUser: true)
+        messages.append(message)
+        userMessage = ""
+        lastSentMessageDate = Date()
         
-        private func sendMessage() {
-            let message = ChatMessage(text: userMessage, isUser: true)
-            messages.append(message)
-            userMessage = ""
-            lastSentMessageDate = Date()
-            
-            isWaitingForResponse = true
-            fetchChatGPTResponse(prompt: message.text) { result in
-                switch result {
-                case .success(let (messageID, aiMessageText)):
-                    DispatchQueue.main.async {
-                        self.typingMessages.append((messageID, aiMessageText))
-                        Task {
-                            await Task.sleep(UInt64(0.05 * Double(aiMessageText.count) * 1_000_000))
-                            messages.append(ChatMessage(text: aiMessageText, isUser: false))
-                            typingMessages.removeAll { $0.0 == messageID }
-                            isWaitingForResponse = false
-                        }
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-        }
-        
-        private func fetchChatGPTResponse(prompt: String, completion: @escaping (Result<(UUID, String), Error>) -> Void) {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let currentTime = dateFormatter.string(from: Date())
-            let chat = """
-                Act as FitnessAI, an intelligent fitness assistant specializing in providing workout advice, exercise suggestions, and fitness planning. You're equipped with knowledge about various exercises, workout routines, fitness tips, and basic nutrition advice. Respond to user queries with helpful, accurate, and concise fitness guidance. Please do not create or imagine information outside of these topics. Use natural language and ensure proper capitalization. Keep responses relevant to the user's query and fitness goals. Current date: \(currentTime). User's prompt: \(prompt).
-                """
-            Task {
-                do {
-                              let stream = try await api.sendMessageStream(text: chat)
-                              var aiMessageText = ""
-                              let messageID = UUID()
-                              for try await line in stream {
-                                  DispatchQueue.main.async {
-                                      aiMessageText += line
-                                      if let index = typingMessages.firstIndex(where: { $0.0 == messageID }) {
-                                          typingMessages[index] = (messageID, aiMessageText)
-                                      } else {
-                                          typingMessages.append((messageID, aiMessageText))
-                                      }
-                                      print(line)
-                                  }
-                              }
-                    let suggestionsPrompt = """
-                    make me a table of prompts i would likely do next as a user to a calender assistant in this format "Replace with prediction 1 : replace with prediction 2 : replace with prediction 3" and output no other text in your response
-                    """
-                    let suggestionsStream = try await api.sendMessageStream(text: suggestionsPrompt)
-                    var suggestionsText = ""
-                    for try await line in suggestionsStream {
-                        DispatchQueue.main.async {
-                            suggestionsText += line
-                        }
-                    }
-                    let responseArray = suggestionsText.split(separator: ":")
-                    for suggestion in responseArray {
-                        let trimmedSuggestion = suggestion.trimmingCharacters(in: .whitespacesAndNewlines)
-                        print(trimmedSuggestion)
-                    }
-                    
-                    
-                    let result = Result<(UUID, String), Error>.success((messageID, aiMessageText))
-                    handleResult(result)
-                }
-            }
-            
-            func handleResult(_ result: Result<(UUID, String), Error>) {
-                switch result {
-                case .success(let (messageID, aiMessageText)):
-                    DispatchQueue.main.async {
+        isWaitingForResponse = true
+        fetchChatGPTResponse(prompt: message.text) { result in
+            switch result {
+            case .success(let (messageID, aiMessageText)):
+                DispatchQueue.main.async {
+                    self.typingMessages.append((messageID, aiMessageText))
+                    Task {
+                        await Task.sleep(UInt64(0.05 * Double(aiMessageText.count) * 1_000_000))
                         messages.append(ChatMessage(text: aiMessageText, isUser: false))
                         typingMessages.removeAll { $0.0 == messageID }
                         isWaitingForResponse = false
                     }
-                case .failure(let error):
-                    print(error.localizedDescription)
                 }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
+    }
+    
+    private func fetchChatGPTResponse(prompt: String, completion: @escaping (Result<(UUID, String), Error>) -> Void) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let currentTime = dateFormatter.string(from: Date())
+        let chat = """
+            Act as FitnessAI, an intelligent fitness assistant specializing in providing workout advice, exercise suggestions, and fitness planning. You're equipped with knowledge about various exercises, workout routines, fitness tips, and basic nutrition advice. Respond to user queries with helpful, accurate, and concise fitness guidance. Please do not create or imagine information outside of these topics. Use natural language and ensure proper capitalization. Keep responses relevant to the user's query and fitness goals. Current date: \(currentTime). User's prompt: \(prompt).
+            """
         
-        
+        Task {
+            do {
+                let stream = try await api.sendMessageStream(text: chat)
+                var aiMessageText = ""
+                let messageID = UUID()
+                
+                for try await line in stream {
+                    DispatchQueue.main.async {
+                        aiMessageText += line
+                        if let index = typingMessages.firstIndex(where: { $0.0 == messageID }) {
+                            typingMessages[index] = (messageID, aiMessageText)
+                        } else {
+                            typingMessages.append((messageID, aiMessageText))
+                        }
+                        print(line)
+                    }
+                }
+                
+                let result = Result<(UUID, String), Error>.success((messageID, aiMessageText))
+                completion(result)
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
     private func chatMessageView(message: ChatMessage) -> some View {
         VStack(alignment: message.isUser ? .trailing : .leading) {
             HStack {
@@ -225,43 +198,43 @@ struct AiView: View {
         }
     }
 
+    private func typingMessageView(typingMessage: String) -> some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text("Node")
+                    .font(.system(size: 13))
+                    .foregroundColor(.gray.opacity(0.5))
+                Spacer()
+            }
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(typingMessage)
+                        .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                        .background(Color.white)
+                        .cornerRadius(15)
+                        .shadow(color: .gray.opacity(0.2), radius: 3, x: 2, y: 2)
+                        .foregroundColor(.black)
+                }
+                Spacer()
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom)
+    }
+}
+
+extension AiView {
+    private func startListeningForKeyboardNotifications() {
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
+            guard let userInfo = notification.userInfo else { return }
+            guard let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            keyboardHeight = keyboardSize.height
+            navbarVisible = false
+        }
         
-        private func typingMessageView(typingMessage: String) -> some View {
-            VStack(alignment: .leading) {
-                HStack {
-                            Text("Node")
-                                .font(.system(size: 13))
-                                .foregroundColor(.gray.opacity(0.5))
-                    Spacer()
-                }
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(typingMessage)
-                            .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
-                            .background(Color.white)
-                            .cornerRadius(15)
-                            .shadow(color: .gray.opacity(0.2), radius: 3, x: 2, y: 2)
-                            .foregroundColor(.black)
-                    }
-                    Spacer()
-                }
-            }
-            .padding(.horizontal)
-            .padding(.bottom)
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+            keyboardHeight = 0
+            navbarVisible = true
         }
     }
-    
-    extension AiView {
-        private func startListeningForKeyboardNotifications() {
-            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
-                guard let userInfo = notification.userInfo else { return }
-                guard let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-                keyboardHeight = keyboardSize.height
-                navbarVisible = false
-            }
-            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
-                keyboardHeight = 0
-                navbarVisible = true
-            }
-        }
-    }
+}
