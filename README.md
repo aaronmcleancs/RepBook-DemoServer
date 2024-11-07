@@ -1,22 +1,30 @@
 Full Stack iOS Fitness Tracking Application
 
-<table>
+<table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
-    <td align="center">
+    <td style="text-align: center; vertical-align: top; width: 250px;">
       <strong>Personal Dashboard</strong><br>
-      <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32" width="250" height="400"/>
+      <div style="width: 250px; height: 400px; overflow: hidden;">
+        <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
+      </div>
     </td>
-    <td align="center">
+    <td style="text-align: center; vertical-align: top; width: 250px;">
       <strong>Workout Builder</strong><br>
-      <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2" width="250" height="400"/>
+      <div style="width: 250px; height: 400px; overflow: hidden;">
+        <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
+      </div>
     </td>
-    <td align="center">
+    <td style="text-align: center; vertical-align: top; width: 250px;">
       <strong>AI-Assistant</strong><br>
-      <img src="https://github.com/user-attachments/assets/9d6a261c-24c5-4790-949c-ea4d969bc4ae" width="250" height="400"/>
+      <div style="width: 250px; height: 400px; overflow: hidden;">
+      <img src="https://github.com/user-attachments/assets/0aa57b5b-f10f-408f-888f-5286a79993cd" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
+      </div>
     </td>
-    <td align="center">
+    <td style="text-align: center; vertical-align: top; width: 250px;">
       <strong>Personalized</strong><br>
-      <img src="https://github.com/user-attachments/assets/50f81a5d-d121-40cb-9623-8f577f37018c" width="250" height="400"/>
+      <div style="width: 250px; height: 400px; overflow: hidden;">
+        <img src="https://github.com/user-attachments/assets/50f81a5d-d121-40cb-9623-8f577f37018c" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
+      </div>
     </td>
   </tr>
 </table>

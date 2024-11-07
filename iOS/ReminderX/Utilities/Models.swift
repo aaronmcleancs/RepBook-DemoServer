@@ -8,6 +8,17 @@ enum NetworkError: Error {
     case unexpectedResponse
 }
 
+struct SafeDataResponse: Decodable {
+    let firstName: String
+    let dateOfBirth: String
+    let workouts: [WorkoutDetail]
+}
+
+struct WorkoutDetail: Decodable {
+    let workoutName: String
+    let exerciseTitles: [String]
+}
+
 struct MemberMetric: Codable {
     let memberId: Int
     let heightCm: Int

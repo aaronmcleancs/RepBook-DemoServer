@@ -108,42 +108,6 @@ struct HeightEntryView: View {
     }
 }
 
-
-struct WorkoutPlanCardView: View {
-    let title: String = "ARM DAY"
-    let day: Int = 4
-    let streakCount: Int = 14
-    let workouts: [String] = ["Push-Ups", "Pull-Ups", "Dumbbell Curls"]
-
-    var body: some View {
-        VStack {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .font(.title)
-                        .fontWeight(.bold)
-                    Text("Day \(day)")
-                        .font(.headline)
-                        .foregroundColor(.gray)
-                }
-
-                Spacer()
-
-                VStack {
-                    Text("\(streakCount) Days")
-                        .fontWeight(.semibold)
-                    Text("Streak")
-                        .font(.caption)
-                }
-                .padding(.trailing)
-            }
-            WorkoutPreviewScrollView(workouts: workouts)
-        }
-        .background(Color.white)
-        .cornerRadius(25)
-    }
-}
-
 struct WorkoutPreviewCardView: View {
     @Binding var workoutName: String
     @Binding var selectedExercises: [Exercise]
@@ -217,10 +181,66 @@ struct ExerciseCardView: View {
         .shadow(radius: 5)
     }
 }
+struct WorkoutPlanCardView: View {
+    let title: String = "ARM DAY"
+    let day: Int = 4
+    let streakCount: Int = 14
+    let workouts: [String] = ["Push-Ups", "Pull-Ups", "Dumbbell Curls"]
 
+    var body: some View {
+        VStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .font(.title)
+                        .fontWeight(.bold)
+                    Text("Day \(day)")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                }
 
+                Spacer()
+
+                VStack {
+                    Text("\(streakCount) Days")
+                        .fontWeight(.semibold)
+                    Text("Streak")
+                        .font(.caption)
+                }
+                .padding(.trailing)
+            }
+            WorkoutPreviewScrollView(workouts: workouts)
+        }
+        .background(Color.white)
+        .cornerRadius(25)
+    }
+}
+
+struct WorkoutPreviewScrollView: View {
+    let workouts: [String]
+    @State private var currentIndex: Int = 0
+    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    
+    var body: some View {
+        TabView(selection: $currentIndex) {
+            ForEach(workouts.indices, id: \.self) { index in
+                Text(workouts[index])
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .tag(index)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle())
+        .frame(height: 100)
+        .onReceive(timer) { _ in
+            withAnimation {
+                currentIndex = (currentIndex + 1) % workouts.count
+            }
+        }
+    }
+}
 struct WorkoutCardView: View {
-    var workout: Workout 
+    var workout: Workout
     @State private var isExpanded: Bool = false
 
     var body: some View {
@@ -269,41 +289,18 @@ struct WorkoutCardView: View {
     }
 
     private func editWorkout() {
-    
+        // Add Edit workout functionality here
     }
 
     private func deleteWorkout() {
-  
+        // Add Delete workout functionality here
     }
 
     private func renameWorkout() {
- 
+        // Add Rename workout functionality here
     }
 }
 
-struct WorkoutPreviewScrollView: View {
-    let workouts: [String]
-    @State private var currentIndex: Int = 0
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
-
-    var body: some View {
-        TabView(selection: $currentIndex) {
-            ForEach(workouts.indices, id: \.self) { index in
-                Text(workouts[index])
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .tag(index)
-            }
-        }
-        .tabViewStyle(PageTabViewStyle())
-        .frame(height: 100)
-        .onReceive(timer) { _ in
-            withAnimation {
-                currentIndex = (currentIndex + 1) % workouts.count
-            }
-        }
-    }
-}
 
 struct ExerciseCard: View {
     let exercise: Exercise

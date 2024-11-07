@@ -1,4 +1,5 @@
 {
+  "originHash" : "b463964042cb16e81df3f32644fc1d57075f6f8e15cad0c8209f55b38b3e00a2",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -37,12 +38,39 @@
       }
     },
     {
+      "identity" : "get",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Get",
+      "state" : {
+        "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
+        "version" : "2.2.1"
+      }
+    },
+    {
       "identity" : "gptencoder",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/alfianlosari/GPTEncoder.git",
       "state" : {
         "revision" : "a86968867ab4380e36b904a14c42215f71efe8b4",
         "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "gptswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftedMind/GPTSwift",
+      "state" : {
+        "revision" : "c90d3fc4418119aa6cc796ded049fa73f4b28185",
+        "version" : "3.0.1"
+      }
+    },
+    {
+      "identity" : "openai-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dylanshine/openai-kit.git",
+      "state" : {
+        "revision" : "bf4e81668fe3c561afa29078121f3ff7d99da210",
+        "version" : "1.8.2"
       }
     },
     {
@@ -154,5 +182,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

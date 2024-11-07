@@ -69,7 +69,30 @@ struct WorkoutBuilderView: View {
     }
     
     private func saveWorkout() {
+        if let memberIdData = KeychainManager.load(service: "YourAppService", account: "userId"),
+           let memberIdString = String(data: memberIdData, encoding: .utf8),
+           let memberId = Int(memberIdString),
+           let authKeyData = KeychainManager.load(service: "YourAppService", account: "authKey"),
+           let authKey = String(data: authKeyData, encoding: .utf8) {
 
+        let exerciseIds = selectedExercises.map { $0.id }
+
+        NetworkManager.createWorkout(
+            memberId: memberId,
+            workoutName: workoutName,
+            exerciseIds: exerciseIds,
+            authKey: authKey) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success():
+                        print("Workout successfully saved!")
+                        isPresented = false
+                    case .failure(let error):
+                        print("Failed to save workout: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
     
     private func addExercise(_ exercise: Exercise) {
