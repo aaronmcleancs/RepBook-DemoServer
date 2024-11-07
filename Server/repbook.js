@@ -441,6 +441,71 @@ app.get('/exercises', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+app.get('/fetchSafeData/:memberId', async (req, res) => {
+    try {
+        const { memberId } = req.params;
+        if (!memberId || isNaN(parseInt(memberId))) {
+            return res.status(400).send('Invalid memberId');
+        }
+
+        const client = await pool.connect();
+        try {
+            const memberQuery = `SELECT first_name, date_of_birth FROM members WHERE member_id = $1`;
+            const workoutsQuery = `
+                SELECT workouts.workout_name, unnest(workouts.exercise_ids) as exercise_id 
+                FROM workouts 
+                WHERE member_id = $1
+            `;
+            const exerciseQuery = `
+                SELECT id, title FROM exercises WHERE id = ANY($1::int[])
+            `;
+
+            const memberResult = await client.query(memberQuery, [memberId]);
+
+            if (memberResult.rows.length === 0) {
+                return res.status(404).send('Member not found');
+            }
+
+            const workoutsResult = await client.query(workoutsQuery, [memberId]);
+            const exerciseIds = [...new Set(workoutsResult.rows.map(row => row.exercise_id))];
+            const exerciseResult = await client.query(exerciseQuery, [exerciseIds]);
+            const exerciseTitleMap = new Map(exerciseResult.rows.map(row => [row.id, row.title]));
+
+            const workoutDetails = workoutsResult.rows.reduce((acc, row) => {
+                const workout = acc.find(w => w.workoutName === row.workout_name);
+
+                if (workout) {
+                    workout.exerciseTitles.push(exerciseTitleMap.get(row.exercise_id));
+                } else {
+                    acc.push({
+                        workoutName: row.workout_name,
+                        exerciseTitles: [exerciseTitleMap.get(row.exercise_id)],
+                    });
+                }
+
+                return acc;
+            }, []);
+
+            console.log('Workout Details:', workoutDetails);
+
+            const responseData = {
+                firstName: memberResult.rows[0].first_name,
+                dateOfBirth: memberResult.rows[0].date_of_birth,
+                workouts: workoutDetails.map(workout => ({
+                    workoutName: workout.workoutName,
+                    exerciseTitles: workout.exerciseTitles
+                }))
+            };
+
+            res.json(responseData);
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        console.error('Error fetching safe data', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.get('/exercises/search', async (req, res) => {
     const searchQuery = req.query.q;
