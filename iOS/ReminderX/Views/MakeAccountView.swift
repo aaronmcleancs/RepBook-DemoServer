@@ -259,7 +259,7 @@ struct MakeAccountView: View {
             return
         }
 
-        if let url = URL(string: "http://192.168.0.122:3000/checkUsername/\(username)") {
+        if let url = URL(string: "http://192.168.0.154:3000/checkUsername/\(username)") {
             URLSession.shared.dataTask(with: url) { data, response, error in
                 if let data = data {
                     if let response = try? JSONDecoder().decode([String: Bool].self, from: data) {

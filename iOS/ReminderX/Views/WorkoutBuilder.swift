@@ -132,7 +132,7 @@ struct WorkoutBuilderView: View {
     private var exercisesList: some View {
         ScrollView {
             VStack(spacing: 15) {
-                ForEach(exercises) { exercise in
+                ForEach(filteredExercises) { exercise in
                     ExerciseCard(exercise: exercise, onAdd: { addExercise(exercise) })
                 }
                 

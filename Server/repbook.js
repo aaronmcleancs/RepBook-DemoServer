@@ -441,6 +441,48 @@ app.get('/exercises', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+/**
+ * @api {get} /exercises/search?workoutId=:workoutId Get Exercises for Specific Workout
+ * @apiDescription Retrieve details of all exercises in a specific workout based on the workout ID.
+ * @apiParam {Number} workoutId ID of the workout.
+ * @apiResponse {JSON} exercises Array of exercise details (title, equipment, difficulty, and id).
+ * @apiError 400 Invalid workoutId.
+ * @apiError 404 No exercises found for the workout.
+ * @apiError 500 Internal Server Error.
+ */
+app.get('/exercises/search', async (req, res) => {
+    try {
+        let workoutId = parseInt(req.query.workoutId, 10);
+
+        if (isNaN(workoutId)) {
+            return res.status(400).send('Invalid workoutId');
+        }
+
+        const workoutQuery = `
+            SELECT exercise_ids
+            FROM workouts
+            WHERE workout_id = $1;
+        `;
+        const workoutResult = await pool.query(workoutQuery, [workoutId]);
+
+        if (workoutResult.rows.length === 0) {
+            return res.status(404).send('No exercises found for this workout');
+        }
+
+        const exerciseIds = workoutResult.rows[0].exercise_ids;
+        const exercisesQuery = `
+            SELECT id, title, equipment, difficulty
+            FROM exercises
+            WHERE id = ANY($1::int[]);
+        `;
+        const exercisesResult = await pool.query(exercisesQuery, [exerciseIds]);
+
+        res.json(exercisesResult.rows);
+    } catch (err) {
+        console.error(`Error retrieving exercises for workout: ${err.message}`);
+        res.status(500).send('Internal Server Error');
+    }
+});
 app.get('/fetchSafeData/:memberId', async (req, res) => {
     try {
         const { memberId } = req.params;
@@ -516,6 +558,52 @@ app.get('/exercises/search', async (req, res) => {
     } catch (err) {
         console.error(`Error on search: ${err.message}`);
         res.status(500).send('Internal Server Error');
+    }
+});
+
+// DELETE endpoint for deleting a workout
+app.delete('/workouts/:workoutId', authenticate, async (req, res) => {
+    try {
+        const { workoutId } = req.params;
+        if (!workoutId) {
+            return res.status(400).send('Workout ID is required');
+        }
+
+        const query = 'DELETE FROM workouts WHERE workout_id = $1;';
+        const result = await pool.query(query, [workoutId]);
+
+        if (result.rowCount > 0) {
+            res.status(200).send('Workout deleted successfully');
+        } else {
+            res.status(404).send('Workout not found');
+        }
+    } catch (err) {
+        console.error(`Error deleting workout: ${err.message}`);
+        res.status(500).send(err.message);
+    }
+});
+
+// PUT endpoint for renaming a workout
+app.put('/workouts/:workoutId', authenticate, async (req, res) => {
+    try {
+        const { workoutId } = req.params;
+        const { newName } = req.body;
+
+        if (!workoutId || !newName) {
+            return res.status(400).send('Workout ID and new name are required');
+        }
+
+        const query = 'UPDATE workouts SET workout_name = $1 WHERE workout_id = $2;';
+        const result = await pool.query(query, [newName, workoutId]);
+
+        if (result.rowCount > 0) {
+            res.status(200).send('Workout renamed successfully');
+        } else {
+            res.status(404).send('Workout not found');
+        }
+    } catch (err) {
+        console.error(`Error renaming workout: ${err.message}`);
+        res.status(500).send(err.message);
     }
 });
 

@@ -34,14 +34,14 @@ struct HomeView: View {
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
         
-        let nameGreeting = " \(userInfo.firstName) \(userInfo.lastName)"
+        let nameGreeting = " \(userInfo.firstName)"
         
         if hour >= 4 && hour < 12 {
-            return "Morning" + nameGreeting
+            return "Good Morning" + nameGreeting
         } else if hour >= 12 && hour < 17 {
-            return "Afternoon" + nameGreeting
+            return "Good Afternoon" + nameGreeting
         } else {
-            return "Evening" + nameGreeting
+            return "Good Evening" + nameGreeting
         }
     }
     
