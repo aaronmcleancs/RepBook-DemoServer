@@ -114,6 +114,13 @@ struct Exercise: Identifiable, Decodable {
     }
 }
 
+struct WorkoutLog: Codable {
+    let memberId: Int
+    let workoutId: Int
+    let time: Int
+}
+
+
 
 enum WeightUnit: String, CaseIterable {
     case lbs = "lbs"

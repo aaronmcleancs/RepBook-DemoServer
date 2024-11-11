@@ -607,6 +607,46 @@ app.put('/workouts/:workoutId', authenticate, async (req, res) => {
     }
 });
 
+/**
+ * @api {post} /loggedWorkouts Log a Workout
+ * @apiDescription Save a completed workout for a specific member.
+ * @apiBody {Number} memberId ID of the member.
+ * @apiBody {Number} workoutId ID of the workout.
+ * @apiBody {Number} time Time taken to complete the workout in seconds.
+ * @apiResponse {Object} loggedWorkout Details of the logged workout.
+ * @apiError 400 Missing required fields.
+ * @apiError 500 Internal Server Error.
+ */
+
+app.post('/loggedWorkouts', authenticate, async (req, res) => {
+    try {
+        const { memberId, workoutId, time } = req.body;
+
+        console.log('Received request:', req.body);
+
+        if (!memberId || !workoutId || !time) {
+            console.error('All fields (memberId, workoutId, time) are required');
+            return res.status(400).send('memberId, workoutId, and time are required');
+        }
+
+        const query = `
+            INSERT INTO logged_workouts (member_id, workout_id, time)
+            VALUES ($1, $2, $3)
+            RETURNING *;
+        `;
+        const values = [memberId, workoutId, time];
+
+        console.log(`Executing SQL query: ${query} with values: ${values}`);
+        const result = await pool.query(query, values);
+
+        console.log('Workout logged successfully', result.rows[0]);
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(`Error during logging workout: ${err.message}`);
+        res.status(500).send(err.message);
+    }
+});
+
 async function authenticate(req, res, next) {
     try {
         const { memberId } = req.params;

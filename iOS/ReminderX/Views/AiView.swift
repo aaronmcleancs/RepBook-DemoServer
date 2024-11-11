@@ -31,13 +31,16 @@ struct AiView: View {
     @State private var selectedURL: String = ""
     @State private var safeData: SafeDataResponse?
     
+    @State private var conversationTitle: String = ""
+    @State private var hasGeneratedTitle: Bool = false
+    
     let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
     let gradientColors = [ColorSchemeManager.shared.currentColorScheme.med, ColorSchemeManager.shared.currentColorScheme.light]
-    let api = ChatGPTAPI(apiKey: "")
-
+    let api = ChatGPTAPI(apiKey: "") 
+    
     var body: some View {
         GeometryReader { geometry in
-            VStack {
+            VStack(alignment: .leading, spacing: 0) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 0)
                         .fill(
@@ -61,6 +64,16 @@ struct AiView: View {
                         if !navbarVisible { Spacer(minLength: 10) }
                         ScrollViewReader { proxy in
                             ScrollView {
+                                // Title Section
+                                VStack(alignment: .leading, spacing: 4) {
+                                    if !conversationTitle.isEmpty {
+                                        Text(conversationTitle)
+                                            .font(.title)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.top, 10)
                                 LazyVStack {
                                     ForEach(messages) { message in
                                         chatMessageView(message: message)
@@ -68,8 +81,18 @@ struct AiView: View {
                                     if isWaitingForResponse {
                                         loadingMessageView()
                                     }
+                                    // Hidden Scroll Anchor
+                                    Color.clear
+                                        .frame(height: 1)
+                                        .id("bottom")
                                 }
                                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+                            }
+                            // Automatic Scrolling to Bottom
+                            .onChange(of: messages.count) { _ in
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    proxy.scrollTo("bottom", anchor: .bottom)
+                                }
                             }
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 30))
@@ -95,7 +118,8 @@ struct AiView: View {
                     }
                     .padding(.bottom, 10)
                 }
-                .padding(.bottom, 70)
+                .padding(.bottom, keyboardHeight > 0 ? 0 : 70)
+                .animation(.easeOut(duration: 0.25), value: keyboardHeight)
             }
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showWebView) {
@@ -108,12 +132,16 @@ struct AiView: View {
                 }
             }
             .onAppear {
-                loadMessages()
                 startListeningForKeyboardNotifications()
                 fetchSafeData()
                 withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
                     gradientRotation = 360
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                messages.removeAll()
+                conversationTitle = ""
+                hasGeneratedTitle = false
             }
         }
     }
@@ -166,6 +194,7 @@ struct AiView: View {
     }
     
     private func sendMessage() {
+        guard !userMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return } // Prevent sending empty messages
         let message = ChatMessage(text: userMessage, isUser: true, webLinks: nil)
         messages.append(message)
         userMessage = ""
@@ -173,18 +202,49 @@ struct AiView: View {
         
         isWaitingForResponse = true
         fetchChatGPTResponse(prompt: message.text) { result in
-            switch result {
-            case .success(let aiMessageText):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let aiMessageText):
                     let webLinks = extractWebLinks(from: aiMessageText)
                     let processedText = replaceLinksWithNumbers(text: aiMessageText, links: webLinks)
                     messages.append(ChatMessage(text: processedText, isUser: false, webLinks: webLinks))
-                    saveMessages()
-                    isWaitingForResponse = false
+                    
+                    if !hasGeneratedTitle, messages.count >= 2 {
+                        let firstUserMessage = messages.first { $0.isUser }?.text ?? ""
+                        let firstAIResponse = messages.first { !$0.isUser }?.text ?? ""
+                        generateConversationTitle(firstUserMessage: firstUserMessage, firstAIResponse: firstAIResponse)
+                    }
+                case .failure(let error):
+                    messages.append(ChatMessage(text: "Failed to get response: \(error.localizedDescription)", isUser: false, webLinks: nil))
                 }
-            case .failure(let error):
-                print(error.localizedDescription)
                 isWaitingForResponse = false
+            }
+        }
+    }
+
+    private func generateConversationTitle(firstUserMessage: String, firstAIResponse: String) {
+        let prompt = "Create a concise 5-10 word title summarizing the following conversation, return nothing but the title in your response, it will be directly placed in the title card on the ui of the app, so any extra syntax or 'Title: ' for example is not wanted and should never be included :\nUser: \(firstUserMessage)\nAI: \(firstAIResponse)"
+        fetchChatGPTTitle(prompt: prompt) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let title):
+                    self.conversationTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                    self.hasGeneratedTitle = true
+                case .failure(let error):
+                    print("Failed to generate title: \(error.localizedDescription)")
+                    self.conversationTitle = "Conversation"
+                }
+            }
+        }
+    }
+
+    private func fetchChatGPTTitle(prompt: String, completion: @escaping (Result<String, Error>) -> Void) {
+        Task {
+            do {
+                let title = try await api.sendMessage(text: prompt)
+                completion(.success(title))
+            } catch {
+                completion(.failure(error))
             }
         }
     }
@@ -238,14 +298,18 @@ struct AiView: View {
                     userDataPrompt = "User: \(safeData.firstName), DOB: \(safeData.dateOfBirth). " +
                                      "Workouts: \(workoutDetails)."
                 }
-                let chat = "Act as FitnessAI, an intelligent fitness assistant specializing in providing workout advice, exercise suggestions, and fitness planning." +
-                "You're equipped with knowledge about various exercises, workout routines, fitness tips, and basic nutrition advice." +
-                "Respond to user queries with helpful, accurate, and concise fitness guidance. The chatbot includes a web embeddor for links that you include in your response message and you are encouraged to include useful relevant fitness links when prompted." +
-                "Current date: \(currentTime). User's prompt: \(prompt). \(userDataPrompt)"
+                let chat = """
+                Act as FitnessAI, an intelligent fitness assistant specializing in providing workout advice, exercise suggestions, and fitness planning. \
+                You're equipped with knowledge about various exercises, workout routines, fitness tips, and basic nutrition advice. \
+                Respond to user queries with helpful, accurate, and concise fitness guidance. The chatbot includes a web embeddor for links that you include in your response message and you are encouraged to include useful relevant fitness links when prompted. \
+                Current date: \(currentTime). User's prompt: \(prompt). \(userDataPrompt)
+                """
                 
                 let aiMessageText = try await api.sendMessage(text: chat)
+                print("AI Response Received: \(aiMessageText)") // Debugging
                 completion(.success(aiMessageText))
             } catch {
+                print("Error fetching AI response: \(error.localizedDescription)") // Debugging
                 completion(.failure(error))
             }
         }
@@ -254,10 +318,9 @@ struct AiView: View {
     private func chatMessageView(message: ChatMessage) -> some View {
         VStack(alignment: message.isUser ? .trailing : .leading) {
             
-            // Header with User or Node Label
             HStack {
                 if !message.isUser {
-                    Text("Node")
+                    Text("RepBot")
                         .font(.system(size: 15, design: .rounded))
                         .foregroundColor(.gray.opacity(0.5))
                 }
@@ -321,7 +384,7 @@ struct AiView: View {
                             }
                         }
                         .padding([.top], 8)
-                        .padding(.horizontal, 20) // Adjusted to account for increased button padding
+                        .padding(.horizontal, 20) 
                     }
                 }
             }
@@ -340,25 +403,6 @@ extension AiView {
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
             keyboardHeight = 0
             navbarVisible = true
-        }
-    }
-}
-extension AiView {
-    private static let messagesKey = "chatMessages"
-
-    private func saveMessages() {
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(messages) {
-            UserDefaults.standard.set(encoded, forKey: Self.messagesKey)
-        }
-    }
-
-    private func loadMessages() {
-        if let savedMessages = UserDefaults.standard.data(forKey: Self.messagesKey) {
-            let decoder = JSONDecoder()
-            if let loadedMessages = try? decoder.decode([ChatMessage].self, from: savedMessages) {
-                messages = loadedMessages
-            }
         }
     }
 }

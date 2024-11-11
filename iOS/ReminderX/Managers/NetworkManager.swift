@@ -375,4 +375,60 @@ class NetworkManager {
             }
         }.resume()
     }
+    static func logWorkout(memberId: Int, workoutId: Int, time: Int, authKey: String, completion: @escaping (Result<WorkoutLog, Error>) -> Void) {
+           guard let url = URL(string: "http://192.168.0.154:3000/loggedWorkouts") else {
+               print("Invalid URL")
+               completion(.failure(NetworkError.invalidURL))
+               return
+           }
+
+           var request = URLRequest(url: url)
+           request.httpMethod = "POST"
+           request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+           request.addValue(authKey, forHTTPHeaderField: "Auth-Key")
+           
+           // Create the body data
+           let workoutLog = WorkoutLog(memberId: memberId, workoutId: workoutId, time: time)
+
+           do {
+               let encoder = JSONEncoder()
+               let jsonData = try encoder.encode(workoutLog)
+               request.httpBody = jsonData
+               print("Request Body: \(String(data: jsonData, encoding: .utf8)!)")
+           } catch {
+               print("Error encoding workout log: \(error)")
+               completion(.failure(error))
+               return
+           }
+
+           URLSession.shared.dataTask(with: request) { data, response, error in
+               if let error = error {
+                   print("Error logging workout: \(error.localizedDescription)")
+                   completion(.failure(error))
+                   return
+               }
+               
+               if let httpResponse = response as? HTTPURLResponse {
+                   print("Response Status Code: \(httpResponse.statusCode)")
+               }
+
+               if let data = data, let responseDataString = String(data: data, encoding: .utf8) {
+                   print("Response Data: \(responseDataString)")
+               }
+
+               guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data else {
+                   print("Unexpected response status code or no data")
+                   completion(.failure(NetworkError.unexpectedResponse))
+                   return
+               }
+
+               do {
+                   let loggedWorkout = try JSONDecoder().decode(WorkoutLog.self, from: data)
+                   completion(.success(loggedWorkout))
+               } catch {
+                   print("Error decoding logged workout: \(error)")
+                   completion(.failure(error))
+               }
+           }.resume()
+       }
 }

@@ -60,36 +60,43 @@ enum ColorSchemeOption: Int, CaseIterable {
 }
 
 struct ColorScheme {
-    static let darkColor = Color(red: 0.52, green: 0, blue: 0)
-    static let medColor = Color(red: 0.95, green: 0.27, blue: 0.26)
-    static let lightColor = Color(red: 1.00, green: 0.63, blue: 0.64)
+    // Base Colors
+    static let darkColor = Color(red: 0.50, green: 0.02, blue: 0.02)
+    static let medColor = Color(red: 0.92, green: 0.30, blue: 0.28)
+    static let lightColor = Color(red: 1.00, green: 0.65, blue: 0.67)
     
-    static let darkBlue = Color(red: 0.85, green: 0.45, blue: 0.00) 
-    static let medBlue = Color(red: 0.98, green: 0.65, blue: 0.20) 
-    static let lightBlue = Color(red: 1.00, green: 0.80, blue: 0.40) 
+    // Blue Palette
+    static let darkBlue = Color(red: 0.80, green: 0.40, blue: 0.05)
+    static let medBlue = Color(red: 0.95, green: 0.70, blue: 0.25)
+    static let lightBlue = Color(red: 1.00, green: 0.85, blue: 0.50)
     
-    static let darkGreen = Color(red: 0.74, green: 0.51, blue: 0)
-    static let medGreen = Color(red: 0.99, green: 0.86, blue: 0.38)
-    static let lightGreen = Color(red: 1.00, green: 0.98, blue: 0.80)
+    // Green Palette
+    static let darkGreen = Color(red: 0.70, green: 0.45, blue: 0.05)
+    static let medGreen = Color(red: 0.95, green: 0.90, blue: 0.45)
+    static let lightGreen = Color(red: 1.00, green: 0.95, blue: 0.85)
     
-    static let darkOrange = Color(red: 0.15, green: 0.43, blue: 0)
-    static let medOrange = Color(red: 0.38, green: 0.80, blue: 0.25) 
-    static let lightOrange = Color(red: 0.67, green: 0.95, blue: 0.63)
-
-    static let darkRed = Color(red: 0, green: 0.05, blue: 0.65)
-    static let medRed = Color(red: 0.45, green: 0.55, blue: 0.97)
-    static let lightRed = Color(red: 0.85, green: 0.87, blue: 1.00)
+    // Orange Palette
+    static let darkOrange = Color(red: 0.12, green: 0.40, blue: 0.05)
+    static let medOrange = Color(red: 0.35, green: 0.75, blue: 0.30)
+    static let lightOrange = Color(red: 0.70, green: 0.98, blue: 0.68)
     
-    static let darkViolet = Color(red: 0.15, green: 0, blue: 0.45)
-    static let medViolet = Color(red: 0.60, green: 0.45, blue: 0.85)
-    static let lightViolet = Color(red: 0.91, green: 0.79, blue: 0.99)
+    // Red Palette
+    static let darkRed = Color(red: 0.05, green: 0.10, blue: 0.60)
+    static let medRed = Color(red: 0.50, green: 0.60, blue: 0.95)
+    static let lightRed = Color(red: 0.90, green: 0.90, blue: 1.00)
     
-    static let darkPink = Color(red: 0.72, green: 0.20, blue: 0.40)
-    static let medPink = Color(red: 0.99, green: 0.45, blue: 0.65)
-    static let lightPink = Color(red: 1.00, green: 0.79, blue: 0.86)
+    // Violet Palette
+    static let darkViolet = Color(red: 0.10, green: 0.05, blue: 0.50)
+    static let medViolet = Color(red: 0.65, green: 0.50, blue: 0.90)
+    static let lightViolet = Color(red: 0.95, green: 0.85, blue: 1.00)
     
-    static let darkMulti1 = Color(red: 0.0, green: 0.2, blue: 0.4)
-    static let medMulti1 = Color(red: 0.4, green: 0.7, blue: 0.9)
-    static let lightMulti1 = Color(red: 0.8, green: 0.9, blue: 0.98)
-
+    // Pink Palette
+    static let darkPink = Color(red: 0.70, green: 0.25, blue: 0.45)
+    static let medPink = Color(red: 0.95, green: 0.50, blue: 0.75)
+    static let lightPink = Color(red: 1.00, green: 0.85, blue: 0.90)
+    
+    // Multi Palette
+    static let darkMulti1 = Color(red: 0.05, green: 0.25, blue: 0.45)
+    static let medMulti1 = Color(red: 0.45, green: 0.75, blue: 0.95)
+    static let lightMulti1 = Color(red: 0.85, green: 0.95, blue: 0.99)
 }

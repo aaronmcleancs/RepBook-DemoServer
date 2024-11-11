@@ -16,41 +16,41 @@ struct WorkoutView: View {
     @State private var exercises: [Exercise] = []
 
     // Assuming ColorSchemeManager is a singleton providing color schemes
-    let gradientColors = [ColorSchemeManager.shared.currentColorScheme.med, ColorSchemeManager.shared.currentColorScheme.dark]
+    let gradientColors = [ColorSchemeManager.shared.currentColorScheme.light, ColorSchemeManager.shared.currentColorScheme.dark]
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 0)
-                .fill(
-                    AngularGradient(
-                        gradient: Gradient(colors: gradientColors),
-                        center: .center,
-                        startAngle: .degrees(gradientRotation),
-                        endAngle: .degrees(gradientRotation + 360)
+            ZStack {
+                RoundedRectangle(cornerRadius: 0)
+                    .fill(
+                        AngularGradient(
+                            gradient: Gradient(colors: gradientColors),
+                            center: .center,
+                            startAngle: .degrees(gradientRotation),
+                            endAngle: .degrees(gradientRotation + 360)
+                        )
                     )
-                )
-                .blur(radius: 70)
-                .edgesIgnoringSafeArea(.all)
-
-            VStack(spacing: 20) {
-                if selectedWorkout != nil {
-                    WorkoutPlanCardView(workout: selectedWorkout!, exercises: exercises)
+                    .blur(radius: 70)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 20) {
+                    if selectedWorkout != nil {
+                        WorkoutPlanCardView(workout: selectedWorkout!, exercises: exercises)
+                    }
+                    workoutListSection
                 }
-                workoutListSection
+                .padding(.horizontal)
+                .padding(.bottom, 76)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 76)
-        }
-        .navigationBarTitle("", displayMode: .inline)
-        .sheet(isPresented: $showingWorkoutBuilder) {
-            WorkoutBuilderView(isPresented: self.$showingWorkoutBuilder)
-        }
-        .onAppear {
-            fetchWorkouts()
-            withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
-                gradientRotation = 360
+            .navigationBarTitle("", displayMode: .inline)
+            .sheet(isPresented: $showingWorkoutBuilder) {
+                WorkoutBuilderView(isPresented: self.$showingWorkoutBuilder)
             }
-        }
+            .onAppear {
+                fetchWorkouts()
+                withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
+                    gradientRotation = 360
+                }
+            }
     }
 
     private var workoutListSection: some View {
@@ -166,12 +166,18 @@ struct GradientTag: View {
 
     var body: some View {
         Text(text)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
             .font(.subheadline)
-            .foregroundColor(.black)
-            .background(.white)
-            .clipShape(Capsule())
+            .foregroundColor(gradientColors[0])
+            .padding(.horizontal, 7)
+            .padding(.vertical, 4)
+            .background(
+                Capsule()
+                    .fill(gradientColors[1])
+            )
+            .overlay(
+                Capsule()
+                    .stroke(gradientColors[0], lineWidth: 1)
+            )
     }
 }
 
@@ -187,18 +193,18 @@ struct WorkoutPreviewScrollView: View {
             ForEach(exercises.indices, id: \.self) { index in
                 VStack(alignment: .leading, spacing: 10) {
                     Text(exercises[index].title)
-                        .font(.title2)
+                        .font(.headline)
                         .fontWeight(.medium)
                     HStack(spacing: 10) {
-                        GradientTag(text: "Equipment: \(exercises[index].equipment)", gradientColors: gradientColors)
-                        GradientTag(text: "Difficulty: \(exercises[index].difficulty)", gradientColors: gradientColors)
+                        GradientTag(text:"\(exercises[index].equipment)", gradientColors: gradientColors)
+                        GradientTag(text:"\(exercises[index].difficulty)", gradientColors: gradientColors)
                     }
                 }
-                .tag(index)
                 .padding()
+                .tag(index)
             }
         }
-        .frame(height: 120)
+        .frame(height: 110)
         .tabViewStyle(PageTabViewStyle())
         .onReceive(timer) { _ in
             withAnimation {
@@ -208,12 +214,11 @@ struct WorkoutPreviewScrollView: View {
     }
 }
 
-
-
 struct WorkoutPlanCardView: View {
     let workout: Workout
     let exercises: [Exercise]
-    
+    @State private var isShowingDetail = false
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -224,31 +229,34 @@ struct WorkoutPlanCardView: View {
                 }
                 Spacer()
                 VStack {
-                    Text("(\(exercises.count)) Exercises")
+                    Text("\(exercises.count) Exercises")
                         .fontWeight(.semibold)
                 }
             }
-            .padding()
+            .padding(.top)
+            .padding(.horizontal)
             
             HStack {
                 WorkoutPreviewScrollView(exercises: exercises)
                 
-                Button(action: startWorkout) {
-                    Label("Start Workout", systemImage: "play.circle.fill")
-                        .labelStyle(.iconOnly)
-                        .imageScale(.large)
+                Button(action: {
+                    isShowingDetail = true
+                }) {
+                    Label("Start", systemImage: "play.circle.fill")
+                        .font(.subheadline)
                         .padding()
                         .foregroundColor(.black)
+                        .background(Color.gray.opacity(0.1)) // Optional background to emphasize the button
+                        .cornerRadius(15)
+                }
+                .padding()
+                .fullScreenCover(isPresented: $isShowingDetail) {
+                    WorkoutDetailView(workout: workout, exercises: exercises)
                 }
             }
         }
         .background(RoundedRectangle(cornerRadius: 30).fill(Color.white))
         .shadow(color: .gray.opacity(0.2), radius: 10, x: 5, y: 5)
-    }
-    
-    private func startWorkout() {
-        // Add logic to start the workout
-        print("Workout started!")
     }
 }
 
@@ -261,7 +269,7 @@ struct WorkoutCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(workout.workoutName)
-                        .font(.title3)
+                        .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
 
