@@ -1,35 +1,23 @@
-Full Stack iOS Fitness Tracking Application
+Full Stack iOS Fitness Tracking Application (Swift, Nodejs, PostresSQL) 
 
 <table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
-    <td style="text-align: center; vertical-align: top; width: 250px;">
+    <td style="text-align: center; vertical-align: top; width: 200px;">
       <strong>Personal Dashboard</strong><br>
-      <div style="width: 250px; height: 400px; overflow: hidden;">
-        <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
-      </div>
+      <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32" width="200" height="400" />
     </td>
-    <td style="text-align: center; vertical-align: top; width: 250px;">
+    <td style="text-align: center; vertical-align: top; width: 200px;">
       <strong>Workout Builder</strong><br>
-      <div style="width: 250px; height: 400px; overflow: hidden;">
-        <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
-      </div>
+      <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2" width="200" height="400" />
     </td>
-    <td style="text-align: center; vertical-align: top; width: 250px;">
+    <td style="text-align: center; vertical-align: top; width: 200px;">
       <strong>AI-Assistant</strong><br>
-      <div style="width: 250px; height: 400px; overflow: hidden;">
-      <img src="https://github.com/user-attachments/assets/0aa57b5b-f10f-408f-888f-5286a79993cd" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
-      </div>
-    </td>
-    <td style="text-align: center; vertical-align: top; width: 250px;">
-      <strong>Personalized</strong><br>
-      <div style="width: 250px; height: 400px; overflow: hidden;">
-        <img src="https://github.com/user-attachments/assets/50f81a5d-d121-40cb-9623-8f577f37018c" style="width: 100%; height: 100%; object-fit: cover; object-position: center;"/>
-      </div>
+      <img src="https://github.com/user-attachments/assets/0aa57b5b-f10f-408f-888f-5286a79993cd" width="200" height="400" />
     </td>
   </tr>
 </table>
 
-<img width="1778" alt="RBUML" src="https://github.com/user-attachments/assets/1c27c927-8b97-4d78-ab7f-f7a966dc2a05">
+
 
 ===============================================
 

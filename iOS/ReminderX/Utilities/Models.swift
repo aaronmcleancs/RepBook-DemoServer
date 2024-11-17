@@ -22,19 +22,58 @@ struct WorkoutDetail: Decodable {
 struct MemberMetric: Codable {
     let memberId: Int
     let heightCm: Int
-    let weightKgString: String
+    let weightKg: Float
     let gender: String
     let workoutFrequency: Int
+    let bodyFatPercentage: Float?
+    let goalType: String?
+    let activityLevel: String?
+    let restingHeartRate: Int?
+    let bmrCalories: Float?
 
     enum CodingKeys: String, CodingKey {
         case memberId = "member_id"
         case heightCm = "height_cm"
-        case weightKgString = "weight_kg"
+        case weightKg = "weight_kg"
         case gender
         case workoutFrequency = "workout_frequency"
+        case bodyFatPercentage = "body_fat_percentage"
+        case goalType = "goal_type"
+        case activityLevel = "activity_level"
+        case restingHeartRate = "resting_heart_rate"
+        case bmrCalories = "bmr_calories"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        memberId = try container.decode(Int.self, forKey: .memberId)
+        heightCm = try container.decode(Int.self, forKey: .heightCm)
+        gender = try container.decode(String.self, forKey: .gender)
+        workoutFrequency = try container.decode(Int.self, forKey: .workoutFrequency)
+        
+        if let weightFloat = try? container.decode(Float.self, forKey: .weightKg) {
+            weightKg = weightFloat
+        } else if let weightString = try? container.decode(String.self, forKey: .weightKg),
+                  let weightFloat = Float(weightString) {
+            weightKg = weightFloat
+        } else {
+            throw DecodingError.typeMismatch(
+                Float.self,
+                DecodingError.Context(
+                    codingPath: [CodingKeys.weightKg],
+                    debugDescription: "Expected Float or String convertible to Float for weightKg"
+                )
+            )
+        }
+        
+        bodyFatPercentage = try? container.decode(Float.self, forKey: .bodyFatPercentage)
+        goalType = try? container.decode(String.self, forKey: .goalType)
+        activityLevel = try? container.decode(String.self, forKey: .activityLevel)
+        restingHeartRate = try? container.decode(Int.self, forKey: .restingHeartRate)
+        bmrCalories = try? container.decode(Float.self, forKey: .bmrCalories)
     }
 }
-
 struct DetailedWorkout: Codable {
     let workoutId: Int
     let memberId: Int
@@ -119,8 +158,6 @@ struct WorkoutLog: Codable {
     let workoutId: Int
     let time: Int
 }
-
-
 
 enum WeightUnit: String, CaseIterable {
     case lbs = "lbs"

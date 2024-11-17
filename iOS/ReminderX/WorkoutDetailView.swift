@@ -6,17 +6,18 @@ struct WorkoutDetailView: View {
     let exercises: [Exercise]
 
     @State private var currentExerciseIndex: Int = 0
-    @State private var repCount: Int = 1
-    @State private var setCount: Int = 1
-    @State private var timerValue: Int = 0 // Start the timer value at 0
+    @State private var repCount: Int = 4
+    @State private var setCount: Int = 10
+    @State private var timerValue: Int = 0
     @State private var timerSubscription: AnyCancellable?
+    @Environment(\.dismiss) var dismiss
 
     let gradientColors = [ColorSchemeManager.shared.currentColorScheme.med, ColorSchemeManager.shared.currentColorScheme.light]
 
     var body: some View {
         ZStack {
             backgroundView
-            VStack(spacing: 20) {
+            VStack(spacing: 16) {
                 headerView
                 if let exercise = currentExercise() {
                     exerciseDetailView(exercise: exercise)
@@ -26,11 +27,11 @@ struct WorkoutDetailView: View {
                 navigationButtons
             }
             .padding()
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color.white))
-            .shadow(color: .gray.opacity(0.3), radius: 10, x: 2, y: 2)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(.systemBackground)))
+            .shadow(color: .gray.opacity(0.3), radius: 8, x: 2, y: 2)
             .padding()
-            .onAppear(perform: startTimer) // Start timer when view appears
-            .onDisappear(perform: stopTimer) // Stop timer when view disappears
+            .onAppear(perform: startTimer)
+            .onDisappear(perform: stopTimer)
         }
     }
 
@@ -44,70 +45,83 @@ struct WorkoutDetailView: View {
                     endAngle: .degrees(360)
                 )
             )
-            .blur(radius: 70)
+            .blur(radius: 50)
             .edgesIgnoringSafeArea(.all)
     }
 
     private var headerView: some View {
-        HStack {
+        VStack(spacing: 8) {
             Text(workout.workoutName)
-                .font(.largeTitle)
+                .font(.title)
                 .bold()
-                .foregroundColor(.black.opacity(0.8))
-            Spacer()
-            Text("Time: \(timerValue)s")
-                .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.primary)
+            Text("Time Elapsed: \(timerValue) s")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
         }
-        .padding()
+        .padding(.horizontal)
     }
 
     private func exerciseDetailView(exercise: Exercise) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(exercise.title)
-                .font(.title)
+                .font(.headline)
                 .bold()
-            HStack(spacing: 10) {
-                GradientTag(text: "\(exercise.equipment)", gradientColors: gradientColors)
-                GradientTag(text: "\(exercise.difficulty)", gradientColors: gradientColors)
+            HStack(spacing: 8) {
+                GradientTag(text: exercise.equipment, gradientColors: gradientColors)
+                GradientTag(text: exercise.difficulty, gradientColors: gradientColors)
             }
         }
-        .padding()
+        .padding(.horizontal)
     }
 
     private var countControls: some View {
-        VStack {
+        HStack {
+            Spacer()
             CounterView(value: $repCount, label: "Reps")
+            Spacer()
             CounterView(value: $setCount, label: "Sets")
+            Spacer()
         }
         .padding(.horizontal)
     }
 
     private var navigationButtons: some View {
-        HStack {
+        HStack(spacing: 20) {
             Button(action: previousExercise) {
-                Text("Previous Exercise")
-                    .foregroundColor(.blue)
+                Text("Previous")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(10)
             }
-            Spacer()
-            Button(action: nextExercise) {
-                Text("Next Exercise")
-                    .foregroundColor(.blue)
-            }
-            Spacer()
+            .disabled(currentExerciseIndex == 0)
+            
             Button(action: endWorkout) {
-                Text("End Workout")
-                    .foregroundColor(.red)
+                Text("Finish")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(10)
             }
+            
+            Button(action: nextExercise) {
+                Text("Next")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(10)
+            }
+            .disabled(currentExerciseIndex == exercises.count - 1)
         }
         .padding()
     }
 
-    // Utility methods
     func currentExercise() -> Exercise? {
-        guard currentExerciseIndex >= 0 && currentExerciseIndex < exercises.count else {
-            return nil
-        }
+        guard currentExerciseIndex >= 0 && currentExerciseIndex < exercises.count else { return nil }
         return exercises[currentExerciseIndex]
     }
 
@@ -124,35 +138,13 @@ struct WorkoutDetailView: View {
     }
 
     func endWorkout() {
-           if let memberIdData = KeychainManager.load(service: "YourAppService", account: "userId"),
-              let memberIdString = String(data: memberIdData, encoding: .utf8),
-              let memberId = Int(memberIdString),
-              let authKeyData = KeychainManager.load(service: "YourAppService", account: "authKey"),
-              let authKey = String(data: authKeyData, encoding: .utf8) {
-              
-              print("Member ID: \(memberId), Auth Key: \(authKey)")
+        dismiss()
+    }
 
-              NetworkManager.logWorkout(memberId: memberId, workoutId: workout.workoutId, time: timerValue, authKey: authKey) { result in
-                  DispatchQueue.main.async {
-                      switch result {
-                      case .success(let loggedWorkout):
-                          print("Workout logged successfully: \(loggedWorkout)")
-                      case .failure(let error):
-                          print("Failed to log workout: \(error.localizedDescription)")
-                      }
-                  }
-              }
-           } else {
-               print("Failed to retrieve credentials")
-           }
-       }
-    // Timer methods
     private func startTimer() {
         timerSubscription = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
-            .sink { _ in
-                timerValue += 1
-            }
+            .sink { _ in timerValue += 1 }
     }
 
     private func stopTimer() {
@@ -165,22 +157,23 @@ struct CounterView: View {
     let label: String
 
     var body: some View {
-        HStack {
+        VStack {
             Text(label)
-                .font(.headline)
-            Spacer()
-            Button(action: { if value > 1 { value -= 1 } }) {
-                Image(systemName: "minus.circle.fill")
+                .font(.subheadline)
+            HStack {
+                Button(action: { if value > 1 { value -= 1 } }) {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.title2)
+                }
+                Text("\(value)")
+                    .font(.title3)
+                    .bold()
+                    .padding(.horizontal)
+                Button(action: { value += 1 }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                }
             }
-            .font(.largeTitle)
-            Text("\(value)")
-                .font(.largeTitle)
-                .bold()
-                .padding(.horizontal)
-            Button(action: { value += 1 }) {
-                Image(systemName: "plus.circle.fill")
-            }
-            .font(.title)
         }
     }
 }

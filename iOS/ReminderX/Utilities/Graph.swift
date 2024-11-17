@@ -1,6 +1,5 @@
 import SwiftUI
 
-// Sample Graph Data
 let exampleGraphData = GraphData(points: [45, 25, 18, 22, 30, 15, 68, 14, 23])
 
 struct GraphData {
@@ -54,33 +53,29 @@ struct LineGraph: View {
     var data: GraphData
     var colorScheme: (dark: Color, med: Color, light: Color)
     
-    // Separate state variables for line and fill animations
     @State private var graphProgressLine: CGFloat = 0
-    @State private var graphProgressFill: CGFloat = 0
-
+    @State private var graphOpacityFill: Double = 0
+    
     var body: some View {
         ZStack {
-            // Gradient fill under the graph line
+
             GeometryReader { geometry in
                 let frame = geometry.frame(in: .local)
                 Path { path in
                     let firstPoint = data.normalizedPoint(index: 0, frame: frame)
                     path.move(to: firstPoint)
                     
-                    // Draw lines through all data points
                     for index in data.points.indices {
                         let nextPoint = data.normalizedPoint(index: index, frame: frame)
                         path.addLine(to: nextPoint)
                     }
                     
-                    // Complete the path to form a closed shape
                     let lastIndex = data.points.count - 1
                     let lastPoint = data.normalizedPoint(index: lastIndex, frame: frame)
                     path.addLine(to: CGPoint(x: lastPoint.x, y: frame.height))
                     path.addLine(to: CGPoint(x: firstPoint.x, y: frame.height))
                     path.closeSubpath()
                 }
-                .trim(from: 0, to: graphProgressFill)
                 .fill(
                     LinearGradient(
                         gradient: Gradient(colors: [colorScheme.light, .white]),
@@ -88,21 +83,20 @@ struct LineGraph: View {
                         endPoint: .bottom
                     )
                 )
-                // Ensure the fill animation starts after the line animation
+                .opacity(graphOpacityFill)
                 .animation(
-                    .easeInOut(duration: 1)
-                        .delay(0.5), // Adjust the delay as needed
-                    value: graphProgressFill
+                    .easeInOut(duration: 1),
+                    value: graphOpacityFill
                 )
             }
-
+            
             // Graph Line
             GeometryReader { geometry in
                 Path { path in
                     let firstPoint = data.normalizedPoint(index: 0, frame: geometry.frame(in: .local))
                     path.move(to: firstPoint)
                     
-                    // Draw lines through all data points
+                   
                     for index in data.points.indices {
                         let nextPoint = data.normalizedPoint(index: index, frame: geometry.frame(in: .local))
                         path.addLine(to: nextPoint)
@@ -113,27 +107,26 @@ struct LineGraph: View {
                     colorScheme.light,
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
-                // Animate the line drawing
                 .animation(
                     .easeInOut(duration: 1),
                     value: graphProgressLine
                 )
             }
 
-            // Graph Points and Labels
+           
             GraphPoints(data: data, colorScheme: colorScheme, graphProgress: graphProgressLine)
         }
         .clipped()
         .padding(.all, 15)
         .onAppear {
-            // Animate the graph line first
-            withAnimation(.easeInOut(duration: 0.3)) {
+            withAnimation(.easeInOut(duration: 1)) {
                 graphProgressLine = 1
             }
             
-            // Animate the gradient fill after a delay
-            withAnimation(.easeInOut(duration: 5).delay(5)) {
-                graphProgressFill = 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation(.easeInOut(duration: 1)) {
+                    graphOpacityFill = 1
+                }
             }
         }
     }
@@ -156,7 +149,6 @@ struct CustomGraphCardView: View {
             }
             .padding(.top)
             
-            // Graph
             LineGraph(data: exampleGraphData, colorScheme: currentColorScheme)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -181,7 +173,6 @@ struct GraphPoints: View {
                 }
             }
 
-            // Peak Label
             if let peakIndex = data.peakIndex, CGFloat(peakIndex) / CGFloat(data.points.count - 1) <= graphProgress {
                 LabelView(
                     text: "\(Int(data.points[peakIndex]))",

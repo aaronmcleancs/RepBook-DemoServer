@@ -24,8 +24,8 @@ app.use((req, res, next) => {
   const pool = new Pool({
     user: process.env.DB_USER || "postgres",
     host: process.env.DB_HOST || "localhost",
-    database: process.env.DB_NAME || "",
-    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "aaronmclean",
+    password: process.env.DB_PASSWORD || "Apple1206",
     port: process.env.DB_PORT || 4126,
 });
 /**
@@ -49,15 +49,24 @@ app.use((req, res, next) => {
 
 app.post('/signup', async (req, res) => {
     try {
-        const { firstName, lastName, dateOfBirth, email, password, username, heightCm, weightKg, gender, workoutFrequency } = req.body;
+        const {
+            firstName, lastName, dateOfBirth, email, password, username,
+            heightCm, weightKg, gender, workoutFrequency,
+            bodyFatPercentage, goalType, activityLevel, restingHeartRate, bmrCalories
+        } = req.body;
         if (!firstName || !lastName || !dateOfBirth || !email || !password || !username) {
             return res.status(400).send('Missing required account fields');
         }
+
         if (!heightCm || !weightKg || !gender || !workoutFrequency) {
             return res.status(400).send('Missing required metrics fields');
         }
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Generate an authentication key
         const authKey = crypto.randomBytes(20).toString('hex');
+
+        // Insert into members table
         const accountQuery = `
             INSERT INTO members (first_name, last_name, date_of_birth, email, password, username, auth_key, time_created)
             VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
@@ -65,13 +74,26 @@ app.post('/signup', async (req, res) => {
         `;
         const accountValues = [firstName, lastName, dateOfBirth, email, hashedPassword, username, authKey];
         const accountResult = await pool.query(accountQuery, accountValues);
+
+        // Get the generated member_id
         const memberId = accountResult.rows[0].member_id;
+
+        // Insert into members_metrics table
         const metricsQuery = `
-            INSERT INTO members_metrics (member_id, height_cm, weight_kg, gender, workout_frequency)
-            VALUES ($1, $2, $3, $4, $5);
+            INSERT INTO members_metrics (
+                member_id, height_cm, weight_kg, gender, workout_frequency, body_fat_percentage, 
+                goal_type, activity_level, resting_heart_rate, bmr_calories
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
         `;
-        const metricsValues = [memberId, heightCm, weightKg, gender, workoutFrequency];
+        const metricsValues = [
+            memberId, heightCm, weightKg, gender, workoutFrequency,
+            bodyFatPercentage || null, goalType || null, activityLevel || null,
+            restingHeartRate || null, bmrCalories || null
+        ];
         await pool.query(metricsQuery, metricsValues);
+
+        // Respond with the newly created member ID and authentication key
         res.status(201).json({ member_id: memberId, auth_key: authKey });
     } catch (err) {
         console.error(`Error during signup: ${err.message}`);
@@ -561,27 +583,41 @@ app.get('/exercises/search', async (req, res) => {
     }
 });
 
-// DELETE endpoint for deleting a workout
 app.delete('/workouts/:workoutId', authenticate, async (req, res) => {
+    console.log('DELETE request received at /workouts/:workoutId');
+
     try {
-        const { workoutId } = req.params;
-        if (!workoutId) {
-            return res.status(400).send('Workout ID is required');
+        const workoutId = parseInt(req.params.workoutId, 10);
+        console.log(`Parsed workoutId: ${workoutId}`);
+
+        if (isNaN(workoutId)) {
+            console.warn('Invalid Workout ID received');
+            return res.status(400).send('Invalid Workout ID');
         }
+
+        console.log(`Attempting to delete workout with ID: ${workoutId}`);
 
         const query = 'DELETE FROM workouts WHERE workout_id = $1;';
         const result = await pool.query(query, [workoutId]);
 
+        console.log(`Database query executed. Rows affected: ${result.rowCount}`);
+
         if (result.rowCount > 0) {
+            console.log(`Workout with ID ${workoutId} deleted successfully`);
             res.status(200).send('Workout deleted successfully');
         } else {
+            console.warn(`Workout with ID ${workoutId} not found`);
             res.status(404).send('Workout not found');
         }
     } catch (err) {
         console.error(`Error deleting workout: ${err.message}`);
-        res.status(500).send(err.message);
+        console.error(`Stack trace: ${err.stack}`);
+        res.status(500).send('Internal server error');
     }
+
+    console.log('DELETE request handling complete');
 });
+
 
 // PUT endpoint for renaming a workout
 app.put('/workouts/:workoutId', authenticate, async (req, res) => {

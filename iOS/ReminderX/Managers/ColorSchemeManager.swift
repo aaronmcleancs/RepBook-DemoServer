@@ -81,9 +81,9 @@ struct ColorScheme {
     static let lightOrange = Color(red: 0.70, green: 0.98, blue: 0.68)
     
     // Red Palette
-    static let darkRed = Color(red: 0.05, green: 0.10, blue: 0.60)
-    static let medRed = Color(red: 0.50, green: 0.60, blue: 0.95)
-    static let lightRed = Color(red: 0.90, green: 0.90, blue: 1.00)
+    static let darkRed = Color(red: 0.10, green: 0.20, blue: 0.80)
+    static let medRed = Color(red: 0.30, green: 0.50, blue: 0.90)
+    static let lightRed = Color(red: 0.60, green: 0.80, blue: 1.00)
     
     // Violet Palette
     static let darkViolet = Color(red: 0.10, green: 0.05, blue: 0.50)

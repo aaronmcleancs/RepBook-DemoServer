@@ -64,7 +64,6 @@ struct AiView: View {
                         if !navbarVisible { Spacer(minLength: 10) }
                         ScrollViewReader { proxy in
                             ScrollView {
-                                // Title Section
                                 VStack(alignment: .leading, spacing: 4) {
                                     if !conversationTitle.isEmpty {
                                         Text(conversationTitle)
@@ -81,14 +80,12 @@ struct AiView: View {
                                     if isWaitingForResponse {
                                         loadingMessageView()
                                     }
-                                    // Hidden Scroll Anchor
                                     Color.clear
                                         .frame(height: 1)
                                         .id("bottom")
                                 }
                                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                             }
-                            // Automatic Scrolling to Bottom
                             .onChange(of: messages.count) { _ in
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     proxy.scrollTo("bottom", anchor: .bottom)
@@ -194,7 +191,7 @@ struct AiView: View {
     }
     
     private func sendMessage() {
-        guard !userMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return } // Prevent sending empty messages
+        guard !userMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let message = ChatMessage(text: userMessage, isUser: true, webLinks: nil)
         messages.append(message)
         userMessage = ""
@@ -333,7 +330,6 @@ struct AiView: View {
             }
             .padding(.horizontal)
             
-            // Message Content
             VStack {
                 HStack {
                     if message.isUser { Spacer() }

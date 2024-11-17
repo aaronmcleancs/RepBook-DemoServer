@@ -230,7 +230,7 @@ struct HomeView: View {
         var subtitle: String
         var colorScheme: Color
         
-        private let cardHeight: CGFloat = 65
+        private let cardHeight: CGFloat = 45
         private let horizontalSpacing: CGFloat = 6
 
         var body: some View {
@@ -253,7 +253,7 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity, minHeight: cardHeight)
             .background(colorScheme.opacity(0))
-            .shadow(color: Color.black.opacity(0), radius: 3, x: 0, y: 2) 
+            .shadow(color: Color.black.opacity(0), radius: 3, x: 0, y: 2)
         }
     }
     
@@ -261,20 +261,31 @@ struct HomeView: View {
         var currentColorScheme: [Color]
         @Binding var memberMetrics: MemberMetric?
 
-        private let cardHeight: CGFloat = 65 
-        private let verticalSpacing: CGFloat = 10 
+        private let cardHeight: CGFloat = 45
+        private let verticalSpacing: CGFloat = 10
         private let additionalPadding: CGFloat = 20
 
         var body: some View {
             VStack(spacing: verticalSpacing) {
                 if let metrics = memberMetrics {
                     InfoCardView(symbolName: "ruler", title: "\(metrics.heightCm) cm", subtitle: "Height", colorScheme: currentColorScheme[1])
-                    InfoCardView(symbolName: "scalemass", title: "\(metrics.weightKgString) kg", subtitle: "Weight", colorScheme: currentColorScheme[1].opacity(0.85))
+                    InfoCardView(symbolName: "scalemass", title: "\(metrics.weightKg) kg", subtitle: "Weight", colorScheme: currentColorScheme[1].opacity(0.85))
                     InfoCardView(symbolName: "person.fill", title: metrics.gender, subtitle: "Gender", colorScheme: currentColorScheme[1].opacity(0.7))
-                    InfoCardView(symbolName: "flame.fill", title: "\(metrics.workoutFrequency)", subtitle: "Workout", colorScheme: currentColorScheme[1].opacity(0.55))
-                } else {
+                    InfoCardView(symbolName: "flame.fill", title: "\(metrics.workoutFrequency)", subtitle: "Workout Frequency", colorScheme: currentColorScheme[1].opacity(0.55))
                     
-                    ForEach(0..<4, id: \.self) { _ in
+                    if let bodyFat = metrics.bodyFatPercentage {
+                        InfoCardView(symbolName: "drop.fill", title: "\(bodyFat)%", subtitle: "Body Fat", colorScheme: currentColorScheme[1].opacity(0.45))
+                    }
+                    
+                    if let activityLevel = metrics.activityLevel {
+                        InfoCardView(symbolName: "bolt.fill", title: activityLevel, subtitle: "Activity Level", colorScheme: currentColorScheme[1].opacity(0.37))
+                    }
+                    
+                    if let bmr = metrics.bmrCalories {
+                        InfoCardView(symbolName: "flame", title: "\(bmr) kcal", subtitle: "BMR Calories", colorScheme: currentColorScheme[1].opacity(0.3))
+                    }
+                } else {
+                    ForEach(0..<7, id: \.self) { _ in
                         InfoCardLoadingView(colorScheme: currentColorScheme[1])
                     }
                 }
@@ -297,8 +308,8 @@ struct HomeView: View {
         }
 
         private func totalHeight() -> CGFloat {
-            let totalCardHeight = CGFloat(4) * cardHeight
-            let totalSpacing = CGFloat(3) * verticalSpacing
+            let totalCardHeight = CGFloat(7) * cardHeight
+            let totalSpacing = CGFloat(6) * verticalSpacing
             return totalCardHeight + totalSpacing + additionalPadding
         }
     }
@@ -327,13 +338,13 @@ struct HomeView: View {
 
     struct LoadingAnimationView: View {
         @State private var isAnimating = false
-        private let cornerRadius: CGFloat = 10 
+        private let cornerRadius: CGFloat = 10
 
         var body: some View {
             GeometryReader { geometry in
                 Rectangle()
                     .fill(Color.gray.opacity(0.5))
-                    .cornerRadius(cornerRadius) 
+                    .cornerRadius(cornerRadius)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .scaleEffect(isAnimating ? 1.02 : 1.0)
                     .opacity(isAnimating ? 0.6 : 0.3)

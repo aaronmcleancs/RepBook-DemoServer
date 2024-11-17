@@ -24,6 +24,10 @@ struct LoginAccountView: View {
                 .padding()
                 .background(Color.white.opacity(0.95))
                 .clipShape(RoundedRectangle(cornerRadius: 15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
                 .padding(.horizontal)
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
@@ -32,6 +36,10 @@ struct LoginAccountView: View {
                 .padding()
                 .background(Color.white.opacity(0.95))
                 .clipShape(RoundedRectangle(cornerRadius: 15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
                 .padding(.horizontal)
             
             if !errorMessage.isEmpty {
@@ -68,7 +76,7 @@ struct LoginAccountView: View {
     }
     
     func loginUser() {
-        guard let url = URL(string: "http://192.168.0.154:3000/login") else {
+        guard let url = URL(string: "http://192.168.0.139:3000/login") else {
             errorMessage = "Invalid URL"
             return
         }
@@ -88,7 +96,7 @@ struct LoginAccountView: View {
         }
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async { 
+            DispatchQueue.main.async {
                 if let error = error {
                     self.errorMessage = "Error occurred: \(error.localizedDescription)"
                     return
