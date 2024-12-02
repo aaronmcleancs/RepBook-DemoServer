@@ -1,4 +1,4 @@
-Full Stack iOS Fitness Tracking Application (Swift, Nodejs, PostresSQL) 
+Full Stack iOS Fitness Tracking Application (Objective-C, Node.js, Express, PostresSQL) 
 
 <table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
@@ -17,11 +17,6 @@ Full Stack iOS Fitness Tracking Application (Swift, Nodejs, PostresSQL)
 
 
 ===============================================
-
-Table of Contents
------------------
-1. Installation and Setup
-2. RESTful API Endpoints
 
 Installation and Setup
 -----------------------
