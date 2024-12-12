@@ -63,10 +63,8 @@ app.post('/signup', async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate an authentication key
         const authKey = crypto.randomBytes(20).toString('hex');
 
-        // Insert into members table
         const accountQuery = `
             INSERT INTO members (first_name, last_name, date_of_birth, email, password, username, auth_key, time_created)
             VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
@@ -75,10 +73,8 @@ app.post('/signup', async (req, res) => {
         const accountValues = [firstName, lastName, dateOfBirth, email, hashedPassword, username, authKey];
         const accountResult = await pool.query(accountQuery, accountValues);
 
-        // Get the generated member_id
         const memberId = accountResult.rows[0].member_id;
 
-        // Insert into members_metrics table
         const metricsQuery = `
             INSERT INTO members_metrics (
                 member_id, height_cm, weight_kg, gender, workout_frequency, body_fat_percentage, 
@@ -92,8 +88,6 @@ app.post('/signup', async (req, res) => {
             restingHeartRate || null, bmrCalories || null
         ];
         await pool.query(metricsQuery, metricsValues);
-
-        // Respond with the newly created member ID and authentication key
         res.status(201).json({ member_id: memberId, auth_key: authKey });
     } catch (err) {
         console.error(`Error during signup: ${err.message}`);
