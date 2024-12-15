@@ -1,5 +1,7 @@
 Full Stack iOS Fitness Tracking Application (Objective-C, Node.js, Express, PostresSQL) 
 
+Good template for basic user auth and multiview
+
 <table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
     <td style="text-align: center; vertical-align: top; width: 200px;">
