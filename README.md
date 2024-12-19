@@ -5,13 +5,13 @@ Good template for basic user auth and multiview
 <table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
     <td style="text-align: center; vertical-align: top; width: 200px;">
-      <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32"/>
+      <img src="https://github.com/user-attachments/assets/5ba9fb6a-a443-4630-a410-58f050833e32" width="200" height="400" />
     </td>
     <td style="text-align: center; vertical-align: top; width: 200px;">
-      <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2"/>
+      <img src="https://github.com/user-attachments/assets/fd344156-c0f8-4005-a561-59f4ff8404c2" width="200" height="400" />
     </td>
     <td style="text-align: center; vertical-align: top; width: 200px;">
-      <img src="https://github.com/user-attachments/assets/0aa57b5b-f10f-408f-888f-5286a79993cd"/>
+      <img src="https://github.com/user-attachments/assets/0aa57b5b-f10f-408f-888f-5286a79993cd" width="200" height="400" />
     </td>
   </tr>
 </table>
