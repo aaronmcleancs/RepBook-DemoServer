@@ -1,6 +1,6 @@
 Full Stack iOS Fitness Tracking Application (Objective-C, Node.js, Express, PostresSQL) 
 
-Good template for basic user auth and multiview
+Good template for basic user auth and semantics fetching for chatbot
 
 <table style="border-collapse: separate; border-spacing: 10px;">
   <tr>
